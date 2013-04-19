@@ -30,6 +30,7 @@ func TestRead(t *testing.T) {
 			Goroot:     false, Standard: false,
 			Imports:      []ImportPath{"github.com/sqs/go-deps"},
 			Deps:         []ImportPath{"github.com/sqs/go-deps", "runtime", "unsafe"},
+			DepsNotFound: []ImportPath{"github.com/sqs/go-deps"},
 			Incomplete:   true,
 			Error:        nil,
 			DepsErrors: []*PackageError{
@@ -56,6 +57,7 @@ func TestRead(t *testing.T) {
 			Goroot:     false, Standard: false,
 			Imports:      []ImportPath{"doesnotexist", "github.com/example/alsodoesntexist"},
 			Deps:         []ImportPath{"doesnotexist", "github.com/example/alsodoesntexist", "runtime", "unsafe"},
+			DepsNotFound: []ImportPath{"doesnotexist", "github.com/example/alsodoesntexist"},
 			Incomplete:   true,
 			Error:        nil,
 			DepsErrors: []*PackageError{
@@ -117,6 +119,9 @@ func checkPackagesEqual(t *testing.T, importPath string, exp, actual *Package) {
 	}
 	if !reflect.DeepEqual(exp.Deps, actual.Deps) {
 		t.Errorf("%s: Deps: want %v, got %v", importPath, exp.Deps, actual.Deps)
+	}
+	if !reflect.DeepEqual(exp.DepsNotFound, actual.DepsNotFound) {
+		t.Errorf("%s: DepsNotFound: want %v, got %v", importPath, exp.DepsNotFound, actual.DepsNotFound)
 	}
 	if exp.Incomplete != actual.Incomplete {
 		t.Errorf("%s: Incomplete: want %v, got %v", importPath, exp.Incomplete, actual.Incomplete)

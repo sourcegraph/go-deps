@@ -26,6 +26,7 @@ type Package struct {
 	// Dependency information
 	Imports      []ImportPath `json:",omitempty"` // import paths used by this package
 	Deps         []ImportPath `json:",omitempty"` // all (recursively) imported dependencies
+	DepsNotFound []ImportPath `json:",omitempty"` // all (recursive) deps that were not found
 
 	// Error information
 	Incomplete bool            `json:",omitempty"` // was there an error loading this package or dependencies?
@@ -56,9 +57,19 @@ func (p *PackageError) Error() string {
 func Read(importPath string) (pkg *Package, err error) {
 	cmd := exec.Command("go", "list", "-e", "-json", importPath)
 	cmd.Env = []string{"GOPATH=" + build.Default.GOPATH}
-	if out, err := cmd.Output(); err == nil {
-		err = json.Unmarshal(out, &pkg)
-		return pkg, err
+	var out []byte
+	if out, err = cmd.Output(); err != nil {
+		return nil, err
 	}
-	return nil, err
+	if err = json.Unmarshal(out, &pkg); err != nil {
+		return nil, err
+	}
+
+	for _, deperr := range pkg.DepsErrors {
+		if strings.HasPrefix(deperr.Err, "cannot find package") {
+			pkg.DepsNotFound = append(pkg.DepsNotFound, ImportPath(deperr.ImportStack[len(deperr.ImportStack)-1]))
+		}
+	}
+
+	return pkg, err
 }
