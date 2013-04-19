@@ -7,23 +7,25 @@ import (
 	"strings"
 )
 
+type ImportPath string
+
 // Relevant fields from Package struct in `go list` (cmd/go/pkg.go).
 type Package struct {
 	// Note: These fields are part of the go command's public API.
 	// See list.go.  It is okay to add fields, but not to change or
 	// remove existing ones.  Keep in sync with list.go
-	Dir        string `json:",omitempty"` // directory containing package sources
-	ImportPath string `json:",omitempty"` // import path of package in dir
-	Name       string `json:",omitempty"` // package name
-	Target     string `json:",omitempty"` // install path
-	Goroot     bool   `json:",omitempty"` // is this package found in the Go root?
-	Standard   bool   `json:",omitempty"` // is this package part of the standard Go library?
-	Stale      bool   `json:",omitempty"` // would 'go install' do anything for this package?
-	Root       string `json:",omitempty"` // Go root or Go path dir containing this package
+	Dir        string     `json:",omitempty"` // directory containing package sources
+	ImportPath ImportPath `json:",omitempty"` // import path of package in dir
+	Name       string     `json:",omitempty"` // package name
+	Target     string     `json:",omitempty"` // install path
+	Goroot     bool       `json:",omitempty"` // is this package found in the Go root?
+	Standard   bool       `json:",omitempty"` // is this package part of the standard Go library?
+	Stale      bool       `json:",omitempty"` // would 'go install' do anything for this package?
+	Root       string     `json:",omitempty"` // Go root or Go path dir containing this package
 
 	// Dependency information
-	Imports []string `json:",omitempty"` // import paths used by this package
-	Deps    []string `json:",omitempty"` // all (recursively) imported dependencies
+	Imports      []ImportPath `json:",omitempty"` // import paths used by this package
+	Deps         []ImportPath `json:",omitempty"` // all (recursively) imported dependencies
 
 	// Error information
 	Incomplete bool            `json:",omitempty"` // was there an error loading this package or dependencies?
