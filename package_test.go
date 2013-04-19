@@ -37,7 +37,7 @@ func TestRead(t *testing.T) {
 				{
 					ImportStack: []string{"imports_github", "github.com/sqs/go-deps"},
 					Pos:         "testdata/src/imports_github/imports_github.go:3:8",
-					Err:         "cannot find package \"github.com/sqs/go-deps\" in any of:\n\t/home/sqs/src/go/src/pkg/github.com/sqs/go-deps (from $GOROOT)\n\t/home/sqs/src/go-deps/testdata/src/github.com/sqs/go-deps (from $GOPATH)",
+					Err:         "cannot find package \"github.com/sqs/go-deps\"",
 				},
 			},
 		}},
