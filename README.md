@@ -15,7 +15,10 @@ Docs: [godoc.org/github.com/sqs/go-deps](http://godoc.org/github.com/sqs/go-deps
         "github.com/sqs/go-deps"
     )
 
-    // ...
+	pkg, _ := deps.Read(test.importPath)
+    for _, p := range pkg.DepsNotFound {
+        p.Download()
+    }
 
 ## Authors
 
