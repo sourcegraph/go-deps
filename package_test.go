@@ -9,7 +9,8 @@ import (
 )
 
 func TestRead(t *testing.T) {
-	build.Default.GOPATH, _ = filepath.Abs("testdata")
+	ctx := Context(build.Default)
+	ctx.GOPATH, _ = filepath.Abs("testdata")
 	tests := []struct {
 		importPath string
 		pkg        Package
@@ -90,7 +91,7 @@ func TestRead(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		pkg, err := Read(test.importPath)
+		pkg, err := ctx.Read(test.importPath)
 		if err != nil {
 			t.Fatalf("%s: Read failed: %s", test.importPath, err)
 		}

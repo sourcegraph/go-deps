@@ -53,10 +53,14 @@ func (p *PackageError) Error() string {
 	return "package " + strings.Join(p.ImportStack, "\n\timports ") + ": " + p.Err
 }
 
+type Context build.Context
+
+var Default Context = Context(build.Default)
+
 // Reads package info for the package at importPath from `go list -json`.
-func Read(importPath string) (pkg *Package, err error) {
+func (c *Context) Read(importPath string) (pkg *Package, err error) {
 	cmd := exec.Command("go", "list", "-e", "-json", importPath)
-	cmd.Env = []string{"GOPATH=" + build.Default.GOPATH}
+	cmd.Env = []string{"GOPATH=" + c.GOPATH}
 	var out []byte
 	if out, err = cmd.Output(); err != nil {
 		return nil, err
@@ -72,4 +76,9 @@ func Read(importPath string) (pkg *Package, err error) {
 	}
 
 	return pkg, err
+}
+
+// Calls Read(importPath) with the go/build.Default build context.
+func Read(importPath string) (pkg *Package, err error) {
+	return Default.Read(importPath)
 }

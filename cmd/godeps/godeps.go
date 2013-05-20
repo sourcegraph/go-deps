@@ -30,7 +30,7 @@ func main() {
 	fmt.Printf("# %s\n", importPath)
 	for _, p := range pkg.DepsNotFound {
 		fmt.Printf("%s\n", p)
-		if err := p.Download(); err != nil {
+		if err := deps.Download(p); err != nil {
 			fmt.Fprintf(os.Stderr, "can't download dep: import path %s: %s", p, err)
 			os.Exit(1)
 		}
