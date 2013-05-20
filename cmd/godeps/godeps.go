@@ -31,7 +31,7 @@ func main() {
 	for _, p := range pkg.DepsNotFound {
 		fmt.Printf("%s\n", p)
 		if err := deps.Download(p); err != nil {
-			fmt.Fprintf(os.Stderr, "can't download dep: import path %s: %s", p, err)
+			fmt.Fprintf(os.Stderr, "can't download dep: import path %s: %s\n", p, err)
 			os.Exit(1)
 		}
 	}
