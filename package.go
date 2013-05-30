@@ -7,26 +7,27 @@ import (
 	"strings"
 )
 
-type ImportPath string
+type bar int
 
 // Relevant fields from Package struct in `go list` (cmd/go/pkg.go).
 type Package struct {
 	// Note: These fields are part of the go command's public API.
 	// See list.go.  It is okay to add fields, but not to change or
 	// remove existing ones.  Keep in sync with list.go
-	Dir        string     `json:",omitempty"` // directory containing package sources
-	ImportPath ImportPath `json:",omitempty"` // import path of package in dir
-	Name       string     `json:",omitempty"` // package name
-	Target     string     `json:",omitempty"` // install path
-	Goroot     bool       `json:",omitempty"` // is this package found in the Go root?
-	Standard   bool       `json:",omitempty"` // is this package part of the standard Go library?
-	Stale      bool       `json:",omitempty"` // would 'go install' do anything for this package?
-	Root       string     `json:",omitempty"` // Go root or Go path dir containing this package
+	Foo        bar
+	Dir        string `json:",omitempty"` // directory containing package sources
+	ImportPath string `json:",omitempty"` // import path of package in dir
+	Name       string `json:",omitempty"` // package name
+	Target     string `json:",omitempty"` // install path
+	Goroot     bool   `json:",omitempty"` // is this package found in the Go root?
+	Standard   bool   `json:",omitempty"` // is this package part of the standard Go library?
+	Stale      bool   `json:",omitempty"` // would 'go install' do anything for this package?
+	Root       string `json:",omitempty"` // Go root or Go path dir containing this package
 
 	// Dependency information
-	Imports      []ImportPath `json:",omitempty"` // import paths used by this package
-	Deps         []ImportPath `json:",omitempty"` // all (recursively) imported dependencies
-	DepsNotFound []ImportPath `json:",omitempty"` // all (recursive) deps that were not found
+	Imports      []string `json:",omitempty"` // import paths used by this package
+	Deps         []string `json:",omitempty"` // all (recursively) imported dependencies
+	DepsNotFound []string `json:",omitempty"` // all (recursive) deps that were not found
 
 	// Error information
 	Incomplete bool            `json:",omitempty"` // was there an error loading this package or dependencies?
@@ -57,10 +58,11 @@ type Context build.Context
 
 var Default Context = Context(build.Default)
 
-// Reads package info for the package at importPath from `go list -json`.
+// Reads package info for the package at importPath from `go list -json`. If importPath is "",
+// reads the package in the current directory.
 func (c *Context) Read(importPath string) (pkg *Package, err error) {
 	cmd := exec.Command("go", "list", "-e", "-json", importPath)
-	cmd.Env = []string{"GOPATH=" + c.GOPATH}
+	cmd.Env = []string{"GOROOT=" + c.GOROOT, "GOPATH=" + c.GOPATH}
 	var out []byte
 	if out, err = cmd.Output(); err != nil {
 		return nil, err
@@ -71,7 +73,7 @@ func (c *Context) Read(importPath string) (pkg *Package, err error) {
 
 	for _, deperr := range pkg.DepsErrors {
 		if strings.HasPrefix(deperr.Err, "cannot find package") {
-			pkg.DepsNotFound = append(pkg.DepsNotFound, ImportPath(deperr.ImportStack[len(deperr.ImportStack)-1]))
+			pkg.DepsNotFound = append(pkg.DepsNotFound, deperr.ImportStack[len(deperr.ImportStack)-1])
 		}
 	}
 
