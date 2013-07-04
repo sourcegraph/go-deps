@@ -2,17 +2,16 @@ go-deps
 =======
 Package deps analyzes and recursively installs Go packages. It is library functionality similar to `go get`.
 
-Source: [github.com/sqs/go-deps](https://github.com/sqs/go-deps)
-Docs: [godoc.org/github.com/sqs/go-deps](http://godoc.org/github.com/sqs/go-deps)
+Docs: [go-deps on Sourcegraph](https://sourcegraph.com/repos/github.com/sourcegraph/go-deps)
 
 ## Installation
 
-	go get github.com/sqs/go-deps
+	go get github.com/sourcegraph/go-deps
 
 ## Example Usage
 
     import (
-        "github.com/sqs/go-deps"
+        "github.com/sourcegraph/go-deps"
     )
 
 	pkg, _ := deps.Read(test.importPath)

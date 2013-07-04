@@ -1,3 +1,3 @@
 package imports_github
 
-import "github.com/sqs/go-deps"
+import "github.com/sourcegraph/go-deps"
