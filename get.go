@@ -40,8 +40,10 @@ func (c *Context) gocmd(args []string) error {
 	fmt.Fprintf(os.Stderr, "go %v\n", args)
 	cmd := exec.Command("go", args...)
 	cmd.Env = []string{"GOROOT=" + c.GOROOT, "GOPATH=" + c.GOPATH, "GIT_ASKPASS=echo", "PATH=" + os.Getenv("PATH")}
-	if out, err := cmd.CombinedOutput(); err != nil {
-		return fmt.Errorf("error: `go get` with args %v: %s: %s", args, err, string(out))
+	cmd.Stdout = c.Out
+	cmd.Stderr = c.Err
+	if err := cmd.Run(); err != nil {
+		return fmt.Errorf("error: `go get` with args %v: %s", args, err)
 	}
 	return nil
 }

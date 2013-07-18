@@ -1,7 +1,6 @@
 package deps
 
 import (
-	"go/build"
 	"path/filepath"
 	"reflect"
 	"strings"
@@ -9,7 +8,7 @@ import (
 )
 
 func TestRead(t *testing.T) {
-	ctx := Context(build.Default)
+	ctx := Default
 	ctx.GOPATH, _ = filepath.Abs("testdata")
 	tests := []struct {
 		importPath string

@@ -3,6 +3,8 @@ package deps
 import (
 	"encoding/json"
 	"go/build"
+	"io"
+	"os"
 	"os/exec"
 	"strings"
 )
@@ -54,9 +56,17 @@ func (p *PackageError) Error() string {
 	return "package " + strings.Join(p.ImportStack, "\n\timports ") + ": " + p.Err
 }
 
-type Context build.Context
+type Context struct {
+	build.Context
+	Err io.Writer
+	Out io.Writer
+}
 
-var Default Context = Context(build.Default)
+var Default Context = Context{
+	Context: build.Default,
+	Err:     os.Stderr,
+	Out:     os.Stdout,
+}
 
 // Reads package info for the package at importPath from `go list -json`. If importPath is "",
 // reads the package in the current directory.
