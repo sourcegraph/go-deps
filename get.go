@@ -37,7 +37,6 @@ func (c *Context) GoGet(importPath string, mode GetMode) error {
 }
 
 func (c *Context) gocmd(args []string) error {
-	fmt.Fprintf(os.Stderr, "go %v\n", args)
 	cmd := exec.Command("go", args...)
 	cmd.Env = []string{"GOROOT=" + c.GOROOT, "GOPATH=" + c.GOPATH, "GIT_ASKPASS=echo", "PATH=" + os.Getenv("PATH")}
 	cmd.Stdout = c.Out
